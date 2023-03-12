@@ -31,7 +31,7 @@ class FilterTreeviewItem extends TreeviewItem {
     this.refItem = item;
   }
 
-  updateRefChecked(): void {
+  updateRefChecked(decoupleChildFromParent = false): void {
     this.children.forEach((child) => {
       if (child instanceof FilterTreeviewItem) {
         child.updateRefChecked();
@@ -39,7 +39,7 @@ class FilterTreeviewItem extends TreeviewItem {
     });
 
     let refChecked = this.checked;
-    if (refChecked) {
+    if (refChecked && !decoupleChildFromParent) {
       for (const refChild of this.refItem.children) {
         if (!refChild.checked) {
           refChecked = false;
@@ -127,7 +127,7 @@ export class TreeviewComponent implements OnChanges, OnInit {
 
   onItemCheckedChange(item: TreeviewItem, checked: boolean): void {
     if (item instanceof FilterTreeviewItem) {
-      item.updateRefChecked();
+      item.updateRefChecked(this.config.decoupleChildFromParent);
     }
 
     this.updateCheckedOfAll();

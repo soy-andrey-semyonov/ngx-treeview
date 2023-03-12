@@ -1,6 +1,6 @@
 {
   "name": "@kishorethecoder/ngx-treeview",
-  "version": "10.0.6",
+  "version": "10.0.7",
   "license": "MIT",
   "description": "An Angular treeview component with checkbox upgraded with angular 14",
   "keywords": [
