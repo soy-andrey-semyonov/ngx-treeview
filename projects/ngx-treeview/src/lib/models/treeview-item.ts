@@ -1,4 +1,4 @@
-import { isBoolean, isNil, isString } from 'lodash';
+import { isBoolean, isNil, isString } from 'lodash-es';
 import { TreeviewHelper } from '../helpers/treeview-helper';
 
 export interface TreeviewSelection {
@@ -13,6 +13,7 @@ export interface TreeItem {
   checked?: boolean;
   collapsed?: boolean;
   children?: TreeItem[];
+  parentCount?: number;
 }
 
 export class TreeviewItem {
@@ -22,6 +23,7 @@ export class TreeviewItem {
   private internalChildren: TreeviewItem[];
   text: string;
   value: any;
+  parentCount = 0;
 
   constructor(item: TreeItem, autoCorrectChecked = false) {
     if (isNil(item)) {
@@ -42,8 +44,10 @@ export class TreeviewItem {
     if (isBoolean(item.disabled)) {
       this.disabled = item.disabled;
     }
+    if (item.parentCount) this.parentCount = item.parentCount;
+
     if (!isNil(item.children) && item.children.length > 0) {
-      this.children = item.children.map(child => {
+      this.children = item.children.map((child) => {
         if (this.disabled === true) {
           child.disabled = true;
         }
@@ -77,7 +81,9 @@ export class TreeviewItem {
     if (!this.internalDisabled) {
       this.internalChecked = value;
       if (!isNil(this.internalChildren)) {
-        this.internalChildren.forEach(child => child.setCheckedRecursive(value));
+        this.internalChildren.forEach((child) =>
+          child.setCheckedRecursive(value)
+        );
       }
     }
   }
@@ -90,7 +96,7 @@ export class TreeviewItem {
     if (this.internalDisabled !== value) {
       this.internalDisabled = value;
       if (!isNil(this.internalChildren)) {
-        this.internalChildren.forEach(child => child.disabled = value);
+        this.internalChildren.forEach((child) => (child.disabled = value));
       }
     }
   }
@@ -108,7 +114,9 @@ export class TreeviewItem {
   setCollapsedRecursive(value: boolean): void {
     this.internalCollapsed = value;
     if (!isNil(this.internalChildren)) {
-      this.internalChildren.forEach(child => child.setCollapsedRecursive(value));
+      this.internalChildren.forEach((child) =>
+        child.setCollapsedRecursive(value)
+      );
     }
   }
 
@@ -124,7 +132,7 @@ export class TreeviewItem {
       this.internalChildren = value;
       if (!isNil(this.internalChildren)) {
         let checked = null;
-        this.internalChildren.forEach(child => {
+        this.internalChildren.forEach((child) => {
           if (checked === null) {
             checked = child.checked;
           } else {
@@ -139,34 +147,41 @@ export class TreeviewItem {
     }
   }
 
-  getSelection(): TreeviewSelection {
+  getSelection(decoupleChildFromParent = false): TreeviewSelection {
     let checkedItems: TreeviewItem[] = [];
     let uncheckedItems: TreeviewItem[] = [];
-    if (isNil(this.internalChildren)) {
+    if (decoupleChildFromParent || isNil(this.internalChildren)) {
       if (this.internalChecked) {
         checkedItems.push(this);
       } else {
         uncheckedItems.push(this);
       }
-    } else {
-      const selection = TreeviewHelper.concatSelection(this.internalChildren, checkedItems, uncheckedItems);
+    }
+
+    if (!isNil(this.internalChildren)) {
+      const selection = TreeviewHelper.concatSelection(
+        this.internalChildren,
+        checkedItems,
+        uncheckedItems,
+        decoupleChildFromParent
+      );
       checkedItems = selection.checked;
       uncheckedItems = selection.unchecked;
     }
 
     return {
       checkedItems,
-      uncheckedItems
+      uncheckedItems,
     };
   }
 
-  correctChecked(): void {
-    this.internalChecked = this.getCorrectChecked();
+  correctChecked(decoupleChildFromParent = false): void {
+    this.internalChecked = this.getCorrectChecked(decoupleChildFromParent);
   }
 
-  private getCorrectChecked(): boolean {
+  private getCorrectChecked(decoupleChildFromParent = false): boolean {
     let checked: boolean = null;
-    if (!isNil(this.internalChildren)) {
+    if (!decoupleChildFromParent && !isNil(this.internalChildren)) {
       for (const child of this.internalChildren) {
         child.internalChecked = child.getCorrectChecked();
         if (checked === null) {

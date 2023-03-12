@@ -1,5 +1,5 @@
 import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
-import { isNil, remove, reverse } from 'lodash';
+import { isNil, remove, reverse } from 'lodash-es';
 import {
   TreeviewItem, TreeviewConfig, TreeviewHelper, TreeviewComponent,
   TreeviewEventParser, OrderDownlineTreeviewEventParser, DownlineTreeviewItem

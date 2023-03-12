@@ -1,5 +1,5 @@
 import { Directive, Input, Output, HostBinding, HostListener, EventEmitter } from '@angular/core';
-import { isNil } from 'lodash';
+import { isNil } from 'lodash-es';
 
 @Directive({
   selector: '[ngxDropdown]',

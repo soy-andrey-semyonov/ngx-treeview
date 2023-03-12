@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { TreeviewItem } from '../models/treeview-item';
 import { TreeviewHelper } from './treeview-helper';
 

@@ -1,5 +1,14 @@
-import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges, TemplateRef, OnInit } from '@angular/core';
-import { isNil, includes } from 'lodash';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  SimpleChanges,
+  OnChanges,
+  TemplateRef,
+  OnInit,
+} from '@angular/core';
+import { isNil, includes } from 'lodash-es';
 import { TreeviewI18n } from '../../models/treeview-i18n';
 import { TreeviewItem, TreeviewSelection } from '../../models/treeview-item';
 import { TreeviewConfig } from '../../models/treeview-config';
@@ -17,13 +26,13 @@ class FilterTreeviewItem extends TreeviewItem {
       disabled: item.disabled,
       checked: item.checked,
       collapsed: item.collapsed,
-      children: item.children
+      children: item.children,
     });
     this.refItem = item;
   }
 
   updateRefChecked(): void {
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       if (child instanceof FilterTreeviewItem) {
         child.updateRefChecked();
       }
@@ -45,7 +54,7 @@ class FilterTreeviewItem extends TreeviewItem {
 @Component({
   selector: 'ngx-treeview',
   templateUrl: './treeview.component.html',
-  styleUrls: ['./treeview.component.scss']
+  styleUrls: ['./treeview.component.scss'],
 })
 export class TreeviewComponent implements OnChanges, OnInit {
   @Input() headerTemplate: TemplateRef<TreeviewHeaderTemplateContext>;
@@ -93,7 +102,9 @@ export class TreeviewComponent implements OnChanges, OnInit {
 
   onAllCollapseExpand(): void {
     this.allItem.collapsed = !this.allItem.collapsed;
-    this.filterItems.forEach(item => item.setCollapsedRecursive(this.allItem.collapsed));
+    this.filterItems.forEach((item) =>
+      item.setCollapsedRecursive(this.allItem.collapsed)
+    );
   }
 
   onFilterTextChange(text: string): void {
@@ -104,7 +115,7 @@ export class TreeviewComponent implements OnChanges, OnInit {
 
   onAllCheckedChange(): void {
     const checked = this.allItem.checked;
-    this.filterItems.forEach(item => {
+    this.filterItems.forEach((item) => {
       item.setCheckedRecursive(checked);
       if (item instanceof FilterTreeviewItem) {
         item.updateRefChecked();
@@ -137,7 +148,7 @@ export class TreeviewComponent implements OnChanges, OnInit {
       item: this.allItem,
       onCheckedChange: () => this.onAllCheckedChange(),
       onCollapseExpand: () => this.onAllCollapseExpand(),
-      onFilterTextChange: (text) => this.onFilterTextChange(text)
+      onFilterTextChange: (text) => this.onFilterTextChange(text),
     };
   }
 
@@ -145,14 +156,19 @@ export class TreeviewComponent implements OnChanges, OnInit {
     let checkedItems: TreeviewItem[] = [];
     let uncheckedItems: TreeviewItem[] = [];
     if (!isNil(this.items)) {
-      const selection = TreeviewHelper.concatSelection(this.items, checkedItems, uncheckedItems);
+      const selection = TreeviewHelper.concatSelection(
+        this.items,
+        checkedItems,
+        uncheckedItems,
+        this.config.decoupleChildFromParent
+      );
       checkedItems = selection.checked;
       uncheckedItems = selection.unchecked;
     }
 
     this.selection = {
       checkedItems,
-      uncheckedItems
+      uncheckedItems,
     };
   }
 
@@ -160,7 +176,7 @@ export class TreeviewComponent implements OnChanges, OnInit {
     if (this.filterText !== '') {
       const filterItems: TreeviewItem[] = [];
       const filterText = this.filterText.toLowerCase();
-      this.items.forEach(item => {
+      this.items.forEach((item) => {
         const newItem = this.filterItem(item, filterText);
         if (!isNil(newItem)) {
           filterItems.push(newItem);
@@ -181,7 +197,7 @@ export class TreeviewComponent implements OnChanges, OnInit {
     } else {
       if (!isNil(item.children)) {
         const children: TreeviewItem[] = [];
-        item.children.forEach(child => {
+        item.children.forEach((child) => {
           const newChild = this.filterItem(child, filterText);
           if (!isNil(newChild)) {
             children.push(newChild);

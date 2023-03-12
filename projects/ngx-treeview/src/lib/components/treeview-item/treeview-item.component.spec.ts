@@ -2,7 +2,7 @@ import { Component, DebugElement, Injectable } from '@angular/core';
 import { TestBed, ComponentFixture, fakeAsync, tick, async, inject } from '@angular/core/testing';
 import { BrowserModule, By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { slice } from 'lodash';
+import { slice } from 'lodash-es';
 import { expect, createGenericTestComponent } from '../../../testing';
 import { TreeviewConfig } from '../../models/treeview-config';
 import { TreeviewItemComponent } from '../treeview-item/treeview-item.component';
