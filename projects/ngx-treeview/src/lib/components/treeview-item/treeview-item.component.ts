@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { isNil } from 'lodash-es';
 import { TreeviewItem } from '../../models/treeview-item';
 import { TreeviewConfig } from '../../models/treeview-config';
@@ -7,34 +13,42 @@ import { TreeviewItemTemplateContext } from '../../models/treeview-item-template
 @Component({
   selector: 'ngx-treeview-item',
   templateUrl: './treeview-item.component.html',
-  styleUrls: ['./treeview-item.component.scss']
+  styleUrls: ['./treeview-item.component.scss'],
 })
 export class TreeviewItemComponent {
   @Input() config: TreeviewConfig;
   @Input() template: TemplateRef<TreeviewItemTemplateContext>;
   @Input() item: TreeviewItem;
   @Output() checkedChange = new EventEmitter<boolean>();
+  @Output() unSelectAll = new EventEmitter<boolean>();
 
-  constructor(
-    private defaultConfig: TreeviewConfig
-  ) {
+  constructor(private defaultConfig: TreeviewConfig) {
     this.config = this.defaultConfig;
   }
 
   onCollapseExpand = () => {
     this.item.collapsed = !this.item.collapsed;
-  }
+  };
 
   onCheckedChange = () => {
     const checked = this.item.checked;
-    if (!isNil(this.item.children) && !this.config.decoupleChildFromParent) {
-      this.item.children.forEach(child => child.setCheckedRecursive(checked));
+    if (this.config.allowSingleSelection && checked) {
+      this.unSelectAll.emit(true);
+      this.item.checked = checked;
+    } else if (
+      !isNil(this.item.children) &&
+      !this.config.decoupleChildFromParent
+    ) {
+      this.item.children.forEach((child) => child.setCheckedRecursive(checked));
     }
     this.checkedChange.emit(checked);
-  }
+  };
 
   onChildCheckedChange(child: TreeviewItem, checked: boolean): void {
-    if (!this.config.decoupleChildFromParent) {
+    if (
+      !this.config.allowSingleSelection &&
+      !this.config.decoupleChildFromParent
+    ) {
       let itemChecked: boolean = null;
       for (const childItem of this.item.children) {
         if (itemChecked === null) {
@@ -52,7 +66,6 @@ export class TreeviewItemComponent {
       if (this.item.checked !== itemChecked) {
         this.item.checked = itemChecked;
       }
-
     }
 
     this.checkedChange.emit(checked);
