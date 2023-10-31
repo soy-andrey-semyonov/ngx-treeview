@@ -85,6 +85,7 @@ describe('DropdownTreeviewComponent', () => {
   });
 
   it('should display button text "All"', () => {
+    console.log(button.nativeElement);
     expect(button.nativeElement).toHaveTrimmedText('All');
   });
 });

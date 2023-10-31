@@ -1,6 +1,6 @@
 # ngx-treeview [![Build Status](https://travis-ci.org/leovo2708/ngx-treeview.svg?branch=master)](https://travis-ci.org/leovo2708/ngx-treeview) [![npm version](https://badge.fury.io/js/ngx-treeview.svg)](https://badge.fury.io/js/ngx-treeview)
 
-An Angular treeview component with checkbox .supports angular 14
+An Angular treeview component with checkbox .supports angular 16
 
 ## Dependencies
 

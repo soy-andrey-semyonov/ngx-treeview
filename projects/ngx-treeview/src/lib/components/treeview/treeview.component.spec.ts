@@ -44,6 +44,10 @@ export function queryFilterTextBox(debugElement: DebugElement): DebugElement {
 }
 
 export function queryCollapseExpandIcon(debugElement: DebugElement): DebugElement {
+  return debugElement.query(By.css('.treeview-header i svg'));
+}
+
+export function queryCollapseExpandButton(debugElement: DebugElement): DebugElement {
   return debugElement.query(By.css('.treeview-header i'));
 }
 
@@ -152,7 +156,7 @@ describe('TreeviewComponent', () => {
 
     it('should show icon on header with collapsed state', () => {
       const collapseExpandIcon = queryCollapseExpandIcon(fixture.debugElement);
-      expect(collapseExpandIcon.nativeElement).toHaveCssClass('fa-expand');
+      expect(collapseExpandIcon.nativeElement).toHaveCssClass('bi-arrows-angle-expand');
     });
   });
 
@@ -578,13 +582,15 @@ describe('TreeviewComponent', () => {
 
     describe('collapse/expand icon', () => {
       let collapseExpandIcon: DebugElement;
+      let collapseExpandButton: DebugElement;
 
       beforeEach(() => {
         collapseExpandIcon = queryCollapseExpandIcon(fixture.debugElement);
+        collapseExpandButton = queryCollapseExpandButton(fixture.debugElement);
       });
 
-      it('should have element class "fa-compress"', () => {
-        expect(collapseExpandIcon.nativeElement).toHaveCssClass('fa-compress');
+      it('should have element class "bi-arrows-angle-contract"', () => {
+        expect(collapseExpandIcon.nativeElement).toHaveCssClass('bi-arrows-angle-contract');
       });
 
       it('should display "Item1" & "Item2"', () => {
@@ -594,13 +600,13 @@ describe('TreeviewComponent', () => {
 
       describe('toggle', () => {
         beforeEach(fakeAsync(() => {
-          collapseExpandIcon.nativeElement.click();
+          collapseExpandButton.nativeElement.click();
           fixture.detectChanges();
           tick();
         }));
 
-        it('should have element class "fa-expand"', () => {
-          expect(collapseExpandIcon.nativeElement).toHaveCssClass('fa-expand');
+        it('should have element class "bi-arrows-angle-contract"', () => {
+          expect(collapseExpandIcon.nativeElement).toHaveCssClass('bi-arrows-angle-contract');
         });
 
         it('should display "Item1" & "Item2"', () => {
